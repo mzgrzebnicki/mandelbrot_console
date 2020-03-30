@@ -1,0 +1,94 @@
+using System;
+using System.Collections.Generic;
+
+namespace mandelbrot_console
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //=====VARIABLES TO CHANGE========
+            
+            int iteration = 100; //number of iterations
+            double start_x_axis = -2; //minimal value of X axis; default: -2
+            double end_x_axis = 1.3; //maximal value of X axis; default: 1.3
+            double resolution_x = 0.02; //resolution/step of X axis; default: 0.02
+            double start_y_axis = 1.1; //minimal value of Y axis; default: 1.1
+            double end_y_axis = -1.1; //maximal value of Y axis; default: -1.1
+            double resolution_y = 0.03; //resolution/step of Y axis; default: 0.03
+
+            //====X and Y axis coordinates=======
+            double x;
+            double y;
+            List<double> xaxis = new List<double> { }; //list composed of X coordinates
+            List<double> yaxis = new List<double> { }; //list composed of Y coordinates
+
+            //====RESULTS====
+            List<int> results = new List<int> { }; //list composed of 0 and 1 for each value of Y; after iteration to next Y value list is cleared
+
+            //X axis
+            for (double i = start_x_axis; i < end_x_axis; i += resolution_x)
+            {
+                xaxis.Add(i);
+            }
+
+            //Y axis
+            for (double i = start_y_axis; i > end_y_axis; i -= resolution_y)
+            {
+                yaxis.Add(i);
+            }
+
+            //starting calculating points from top left corner of the coordinate system, for instance first point x = -2 and y = 2;
+            //for each Y value next X value is used 
+            foreach (var j in yaxis)
+            {
+                //next X values
+                foreach (var i in xaxis)
+                {
+                    //variables x and y below are coefficient values of respectively real and imaginary number of the complex number c in equation z=z*z+c
+                    x = i;
+                    y = j;
+
+                    //below iteration of the formula z=z*z+c
+                    //equations are from https://www.youtube.com/watch?v=6IWXkV82oyY&t=1257s (The Art of Code) and from https://hardmath123.github.io/scratch-mandelbrot.html
+                    for (int h = 0; h < iteration; h++)
+                    {
+                        x = x * x + (y * y * (-1));
+                        x = x + i;
+                        y = 2 * x * y;
+                        y = y + j;
+
+
+                        if (x >= 2 | x <= -2)
+                        {
+                            break;
+                        }
+                    }
+
+                    //when X goes to infinity, value "0" is added to a 'results list'
+                    if (x >= 2 | x <= -2)
+                    {
+                        results.Add(0);
+                    }
+
+                    //when X is stable, value "1" is added to a 'results list'
+                    if (x < 2 && x > -2)
+                    {
+                        results.Add(1);
+                    }
+
+                }
+                //code below displays list of results, which is composed of 0 and 1
+                foreach (var item in results)
+                {
+                    Console.Write(Convert.ToString(item));
+                }
+                Console.Write("\n");
+                results.Clear();
+
+            }
+
+
+        }
+    }
+}
